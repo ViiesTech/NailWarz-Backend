@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nail-war-app-2025",
+  "private_key_id": "31f7c85df1d95df1cd7e22b3751342405d0f445b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCO+3rIQG3h5TbJ\nP3RqKmoUWnDdcErAcC5pAgjDyhg2Shim5N490rhG/WXsyrc2uTbApEySuP9IuvK1\nCwIOCbsMk0Gkv2nYTs8xNfq8Iv2T4ivEv7h9rqFJ1/RNzeG2luFUeKtau7PeuNvb\ncbysdEUbqYBuG58NUcTnixD/Uz4RPFj4uQ0GuPOfE+c8VsCnqZAstPVreHiq5JoW\naYBoB7JuHSlY0hrcRXWaUdpGT52/IQc871pe3Ta67Wf9pHRjEoqQAPPp5RGWTfHe\nNhWoBUKLiyATDGferAUZTAlKz/LHMb+lr9k30GO44X6xxaBNsRnkmZI8YQ7rgO/z\nulI5oSajAgMBAAECggEADzBj4LYHdkHVShe1lDmhPzxEVSHCryK7q2gN6k6jt9Cz\nQbd6bHLgJJpyo279e5C9YkWR5NxGMkG52sWqmDcsaa+S/59d7R6iIAYt9qJ48abL\nI4GCZceRVrjcOQ+v9KeelEylV2QtPXHB2VQByQgo90FQZWIFyXJwSnCZg6YiJ85q\ntiAIV7pkYpfOwLjBdYM+Q4fd85lFN7YVI88JrR4x6BfUHEPyJoxW+uxAzpFTvpri\noQRn8/+HkxEnf+1eeTme57IIiv0SmvxD7QpOX7uDJHL7T5LdKuVqQPVNpXeTbYg0\nK7P+199ueVrA0FELkwyvuIYlU2cP2fIXdCtfGgAIQQKBgQDCCVB9/01aFlMfQfGn\nkoNaphMPFEerrDJ7AmBT3y7IWuMWjtIcLh+gY03/VkLJ6BtKwvEdumx6AjTnnNL/\n7Jgt1Zspvu3yfBVN8bsLxLNXqVId3Nih50UdueyNXO/63KIGpF47dE/oJr1ZMF7a\nwI5uzb1RS8ju+PTA3P/6AVVhEQKBgQC8pHESh/HiKFUQ6ZJkrIvtDvmB5tjQfSPu\n6YWgSLkuF0gJ9ecMfO4a9bzlpQhBpAjaaWh4MlJ0HRQwB8zhbioMqnpfa7JNEGh7\nkx5S1x2+dzbifqKAHDmiFQnJC+idDRDycefXuD1mSc3gHa7+eCqVIRZuVPcFgkA8\nrzlOGB3McwKBgQCxwKCpXCj7Xzo0h0+eaFzGvR72kGh7vxrbjzi5fNo5lvEzqBCY\n2jQE1RQN1nMGzge6fE0wI6jeOIlIqGSvKIncazNikdMfcUZ/CfSE+mQk6SsdykP2\nRYwOiFVIxxvc3yPbG9ZrdskA7gRF4Ubz9LRGk1lcUSW4rf5hc9NXrsMNUQKBgFTb\nwEWuw7+Rlxqhh4okGFnOV6z41GWNNaHeiI7ex/aU4IIijQoQFOgpzQyc3YbxrE3c\nBvOy52Z2QkOM7rwl22KRObU89Bs4m1ejiYuIW0f3xsfCYYUxrTddMWawJbaoTwxQ\n8xMWPQCLiMIdeD/efIFTPgzpyak/u3fQ9v1LWfRDAoGAR/6Y8lL9rW/9W1pxmDM2\nOejbjFVlpj6ToCdNGqU97GYWbvRUKDYUcnaWVEM6aWzfTvzPwGZzkobenU6J4lN9\npibUYHm3K3G+Wg2nR5XV1TxZ3FaHIdqN1Dj9+QTe/CHQYu1QTTYYpkxXffXYV/xt\n00AP9DiMdf4GOYpUfdhg0Zk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@nail-war-app-2025.iam.gserviceaccount.com",
+  "client_id": "105129117878813265694",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40nail-war-app-2025.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
