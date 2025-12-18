@@ -4,6 +4,7 @@ const path = require("path")
 const connectDb = require('./database/ConnectDb')
 const PORT = 3000
 const routes = require('./routes/route')
+const superAdminRoutes = require('./routes/superAdmin')
 require('dotenv').config()
 
 
@@ -21,10 +22,11 @@ app.use("/", express.static(path.resolve(__dirname, "./uploads/technician")));
 app.use("/", express.static(path.resolve(__dirname, "./uploads/battle")));
 
 app.use('/api', routes)
+app.use('/api/superAdmin', superAdminRoutes)
 
 app.get('/', (req, res)=>{
     res.send({
-        api: "workding",
+        api: "working",
         succcess: true
     })
 })

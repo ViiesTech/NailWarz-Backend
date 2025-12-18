@@ -47,9 +47,9 @@ const adminProfileSchema = new mongoose.Schema(
     locationName: {
       type: String,
     },
-    walletBalance:{
-      type:Number,
-      default:0
+    walletBalance: {
+      type: Number,
+      default: 0
     },
     avgRating: {
       type: Number,
@@ -64,7 +64,7 @@ const adminProfileSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "category",
       },
-    ], 
+    ],
     salonCategoryId: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -89,7 +89,7 @@ const adminProfileSchema = new mongoose.Schema(
           type: String,
         },
         endTime: {
-              type: String,
+          type: String,
         },
         isActive: {
           type: Boolean,
@@ -97,8 +97,8 @@ const adminProfileSchema = new mongoose.Schema(
         },
       },
     ],
-    FCMToken:{
-      type:String
+    FCMToken: {
+      type: String
     },
     isUpdated: {
       type: Boolean,
@@ -108,6 +108,7 @@ const adminProfileSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    stripeAccountId: { type: String , default:null },
   },
   {
     timestamps: true,

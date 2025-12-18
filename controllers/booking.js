@@ -425,7 +425,7 @@ async function getBookingsBySalonId(req, res) {
 
     if (time) {
       const start = moment(time, "hh:mm A");
-      const end = moment(time, "hh:mm A").add(59, "minutes");
+      const end = moment(time, "hh:mm A").add(29, "minutes");
 
       // First fetch only salon + date (faster)
       bookings = await bookingModel
