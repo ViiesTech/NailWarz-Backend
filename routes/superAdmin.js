@@ -1,6 +1,7 @@
 const express = require("express");
 const superAdminController = require("../controllers/superAdmin");
 const IsSuperAdmin = require("../middleware/superAdmin");
+const { productUpload } = require("../middleware/upload");
 
 const routes = express.Router();
 
@@ -33,12 +34,11 @@ routes.route('/balance')
     .get(superAdminController.getStripeBalance)
 
 routes.route('/product')
-    .post(superAdminController.addProduct)
+    .post(productUpload.array("images", 5), superAdminController.addProduct)
     .get(superAdminController.getAllProducts)
-    
+
 routes.route('/product/:id')
-    .post(superAdminController.addProduct)
-    .patch(superAdminController.updateProduct)
+    .patch(productUpload.array("images", 5), superAdminController.updateProduct)
     .delete(superAdminController.deleteProduct)
     .get(superAdminController.getAllProducts)
 

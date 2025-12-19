@@ -114,18 +114,6 @@ routes.post("/giveRatingToSalon", ratingController.giveRatingToSalon);
 routes.get("/getRatingBySalonOrStar", ratingController.getRatingBySalonOrStar);
 routes.get("/getRatingByRatingId", ratingController.getRatingByRatingId);
 
-//superAdmin
-// routes.post("/signUpSuperAdmin", superAdminController.signUpSuperAdmin);
-// routes.post("/loginSuperAdmin", superAdminController.loginSuperAdmin);
-// routes.route('/dashboard')
-//     .get(IsSuperAdmin, superAdminController.getDashboatdStats)
-// routes.route('/user')
-//     .get(superAdminController.getAllUser)
-// routes.route('/vendor')
-//     .get(superAdminController.getAllVendor)
-// routes.route('/vendor/:id')
-//     .get(superAdminController.getSingleVendor)
-
 //category
 routes.post("/createCategory", categoryController.createCategory);
 routes.post("/updateCategory", categoryController.updateCategory);

@@ -811,14 +811,14 @@ async function addProduct(req, res) {
   try {
     let { name, sku, category, price, stock, unitType, isActive } = req.body;
 
+    price = Number(price);
+    stock = Number(stock);
+    isActive = isActive === "false" ? false : true;
+
     if (!name) return res.status(400).json({ success: false, message: "Name is required" });
     if (!sku) return res.status(400).json({ success: false, message: "sku is required" });
     if (!price) return res.status(400).json({ success: false, message: "price is required" });
-    if (!stock) return res.status(400).json({ success: false, message: "stock is required" });
     if (!unitType) return res.status(400).json({ success: false, message: "unitType is required" });
-    if (typeof isActive === "undefined") {
-      return res.status(400).json({ success: false, message: "isActive is required" });
-    }
 
     if (typeof category === "string") {
       try {
@@ -832,9 +832,23 @@ async function addProduct(req, res) {
       return res.status(400).json({ success: false, message: "At least one category is required" });
     }
 
+    const existingProduct = await Product.findOne({
+      name: { $regex: new RegExp(`^${name}$`, "i") }
+    });
+
+    if (existingProduct) {
+      return res.status(409).json({
+        success: false, message: "Product with this name already exists"
+      });
+    }
+
+    const images = req.files
+      ? req.files.map(file => `${file.filename}`)
+      : [];
+
     const product = new Product({
-      name, sku, category: category, price, stock,
-      unitType, isActive: isActive
+      name, sku, category: category, price, stock: stock || 0,
+      unitType, isActive: isActive, images
     });
 
     await product.save(); // pre-hook will update status automatically
@@ -865,6 +879,25 @@ async function updateProduct(req, res) {
 
     const updateData = {};
 
+    if (price !== undefined) price = Number(price);
+    if (stock !== undefined) stock = Number(stock);
+    if (typeof isActive !== "undefined") isActive = isActive === "false" ? false : true;
+
+    // 🔹 Category parse from string if needed
+    if (category !== undefined) {
+      if (typeof category === "string") {
+        try {
+          category = JSON.parse(category);
+        } catch (err) {
+          return res.status(400).json({ success: false, message: "Category must be a valid JSON array" });
+        }
+      }
+      if (!Array.isArray(category) || category.length === 0) {
+        return res.status(400).json({ success: false, message: "At least one category is required" });
+      }
+    }
+
+    // 🔹 Assign updated fields
     if (name !== undefined) updateData.name = name;
     if (sku !== undefined) updateData.sku = sku;
     if (category !== undefined) updateData.category = category;
@@ -873,20 +906,20 @@ async function updateProduct(req, res) {
     if (unitType !== undefined) updateData.unitType = unitType;
     if (typeof isActive !== "undefined") updateData.isActive = isActive;
 
+    // 🔹 Handle images (replace old with new if provided)
+    if (req.files && req.files.length > 0) {
+      const images = req.files.map(file => `${file.filename}`);
+      updateData.images = images; // replace old array
+    }
+
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No fields provided to update"
-      });
+      return res.status(400).json({ success: false, message: "No fields provided to update" });
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       updateData,
-      {
-        new: true,
-        runValidators: true
-      }
+      { new: true, runValidators: true }
     );
 
     return res.status(200).json({
@@ -945,6 +978,7 @@ async function deleteProduct(req, res) {
 async function getAllProducts(req, res) {
   try {
     const { id } = req.params;
+    const { search , status } = req.query;
 
     if (id) {
       const product = await Product.findById(id);
@@ -961,8 +995,22 @@ async function getAllProducts(req, res) {
         product
       });
     }
+
+    let filter = {};
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } }, // case-insensitive
+        { sku: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+
     // 1️⃣ Get all products
-    const products = await Product.find().sort({ createdAt: -1 });
+    const products = await Product.find(filter).sort({ createdAt: -1 });
 
     const summary = await Product.aggregate([
       {

@@ -55,7 +55,7 @@ const serviceUpload = multer({ storage: serviceStorage });
 
 const battleStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./uploads/battle"); 
+    cb(null, "./uploads/battle");
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -63,13 +63,43 @@ const battleStorage = multer.diskStorage({
 });
 const battleUpload = multer({ storage: battleStorage });
 
+const productStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./uploads/product");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const imageFileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/webp"
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only image files are allowed"), false);
+  }
+};
+
+const productUpload = multer({
+  storage: productStorage,
+  fileFilter: imageFileFilter,
+  limits: {
+    files: 5, // max 5 images
+  },
+});
 
 
-module.exports ={
+module.exports = {
   userUpload,
   postUpload,
   technicianUpload,
   adminUpload,
   serviceUpload,
-  battleUpload
+  battleUpload,
+  productUpload,
 }

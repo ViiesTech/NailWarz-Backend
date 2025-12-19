@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: "100%";
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 5px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333333;
+      text-align: center;
+    }
+    p {
+      color: #555555;
+      line-height: 1.6;
+    }
+    .order-details {
+      margin-top: 20px;
+      align-items: center;
+    }
+    .order-details table {
+      width: 100%;
+      border-collapse:separate;
+    }
+    .order-details th, .order-details td {
+      padding: 12px;
+      border-bottom: 1px solid #dddddd;
+      text-align: left;
+    }
+    .order-details th {
+      background-color: #f7f7f7;
+    }
+    .total {
+      font-weight: bold;
+      text-align: right;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #888888;
+      text-align: center;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Thank you for your order!</h1>
+    <p>Hi <strong>{{customerName}}</strong>,</p>
+    <p>Your order <strong>{{orderNumber}}</strong> has been successfully placed on <strong>{{orderDate}}</strong>. We are currently processing your order and will keep you updated with any important information regarding your purchase.</p>
+
+    <div class="order-details">
+      <h2>Order Details</h2>
+      <table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>SKU</th>
+      <th>Qty</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{productRows}}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" class="total">Total:</td>
+      <td>${{total}}</td>
+    </tr>
+  </tfoot>
+</table>
+    </div>
+
+    <div class="shipping-details">
+      <h2>Address</h2>
+      <p>
+        {{customerStreet}}<br>
+        {{customerCity}}, {{customerState}} {{customerPostalCode}}<br>
+        {{customerCountry}}<br>
+        Phone: {{customerPhone}}
+      </p>
+    </div>
+
+    <div class="payment-details">
+      <h2>Payment Details</h2>
+      <p>Amount: <strong>${{paymentAmount}}</strong></p>
+      <p>Payment Method: <strong>{{paymentMethod}}</strong></p>
+      <p>Status: <strong>{{paymentStatus}}</strong></p>
+    </div>
+
+    <a href="{{websiteURL}}" class="btn">Visit Our Website</a>
+
+    <div class="footer">
+      <p>If you have any questions, contact our support team.</p>
+      <p>&copy; 2025 NailWarz. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

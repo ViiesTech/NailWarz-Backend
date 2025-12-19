@@ -40,6 +40,9 @@ const productSchema = new mongoose.Schema(
         unitType: {
             type: String, required: true, enum: ["piece", "pack"],
         },
+        images: {
+            type: [String], default: []
+        },
         isDeleted: {
             type: Boolean,
             default: false
