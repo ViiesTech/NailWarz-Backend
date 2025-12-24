@@ -11,6 +11,9 @@ const RevenueShare = require("../models/revenueShare");
 const VendorPayout = require("../models/vendorPayout");
 const Stripe = require("stripe");
 const Product = require("../models/product");
+const Content = require("../models/content");
+const { CONTENT_STATUS } = require("../constants/contentStatus");
+const { sendContentSelectEmail } = require("../utils/contentSelectEmail");
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -978,7 +981,7 @@ async function deleteProduct(req, res) {
 async function getAllProducts(req, res) {
   try {
     const { id } = req.params;
-    const { search , status } = req.query;
+    const { search, status } = req.query;
 
     if (id) {
       const product = await Product.findById(id);
@@ -990,9 +993,18 @@ async function getAllProducts(req, res) {
         });
       }
 
+      // 🔁 Get related products
+      const relatedProducts = await Product.find({
+        _id: { $ne: product._id },                // exclude current product
+        category: { $in: product.category },      // match category
+        isDeleted: false,
+        isActive: true
+      }).sort({ createdAt: -1 }).limit(4);
+
       return res.status(200).json({
         success: true,
-        product
+        product,
+        relatedProducts
       });
     }
 
@@ -1059,9 +1071,183 @@ async function getAllProducts(req, res) {
   }
 }
 
+async function createContentRequest(req, res) {
+  try {
+    let { name, description, phone, email, address, social } = req.body;
+
+    if (!name) return res.status(400).json({ success: false, message: "name is required" });
+    if (!description) return res.status(400).json({ success: false, message: "description is required" });
+    if (!phone) return res.status(400).json({ success: false, message: "phone is required" });
+    if (!email) return res.status(400).json({ success: false, message: "email is required" });
+    if (!address) return res.status(400).json({ success: false, message: "address is required" });
+    if (!social) return res.status(400).json({ success: false, message: "social is required" });
+
+    if (social && typeof social === "string") {
+      try {
+        social = JSON.parse(social);
+      } catch (err) {
+        return res.status(400).json({ success: false, message: "Invalid social format" });
+      }
+    }
+
+    if (!social.name) return res.status(400).json({ success: false, message: "Social name is required" });
+    if (!social.platform) return res.status(400).json({ success: false, message: "Social platform is required" });
+
+    const existingContent = await Content.findOne({ email });
+    if (existingContent) {
+      return res.status(409).json({
+        success: false, message: "Request already submitted with this email"
+      });
+    }
+
+    const images = req.files
+      ? req.files.map(file => `${file.filename}`)
+      : [];
+
+    // ✅ Create content request
+    const content = await Content.create({
+      name, description, phone,
+      email, address, images, social
+    });
+
+    return res.status(201).json({
+      success: true, message: "Your request has been submitted successfully", content
+    });
+
+  } catch (error) {
+    console.error("Create Content Request Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message
+    });
+  }
+}
+
+
+async function getContent(req, res) {
+  try {
+    const { id } = req.params;
+    const { status, search, } = req.query;
+
+    if (id) {
+      const content = await Content.findById(id);
+
+      if (!content) return res.status(404).json({ success: false, message: "Content not found" });
+
+      return res.status(200).json({ success: true, message: "Content fetched successfully", content });
+    }
+
+    let filter = {};
+
+    if (status) filter.status = status;
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { "social.name": { $regex: search, $options: "i" } }
+      ];
+    }
+
+    const contents = await Content.find(filter)
+      .sort({ createdAt: -1 });
+
+    // 4️⃣ Stats aggregation (NO search / filter)
+    const statsAgg = await Content.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: { $sum: 1 },
+          pending: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
+            }
+          },
+          selected: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "selected"] }, 1, 0]
+            }
+          }
+        }
+      }
+    ]);
+
+    const stats = statsAgg[0] || {
+      total: 0,
+      pending: 0,
+      selected: 0
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "Content list fetched successfully",
+      stats: {
+        total: stats.total,
+        pending: stats.pending,
+        selected: stats.selected
+      },
+      contents
+    });
+
+  } catch (error) {
+    console.error("get content Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message
+    });
+  }
+}
+
+async function updateContentStatus(req, res) {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) return res.status(400).json({ success: false, message: "Status is required" });
+
+    if (status === CONTENT_STATUS.PENDING) {
+      return res.status(400).json({ success: false, message: "Status cannot be set to pending" });
+    }
+
+    const content = await Content.findById(id);
+
+    if (!content) return res.status(404).json({ success: false, message: "Content not found" });
+
+    if (status === CONTENT_STATUS.REJECTED) {
+      await Content.findByIdAndDelete(id);
+      return res.status(200).json({ success: true, message: "Content rejected and removed successfully" });
+    }
+
+    if (status === CONTENT_STATUS.SELECTED) {
+      content.status = CONTENT_STATUS.SELECTED;
+      await content.save();
+      sendContentSelectEmail(content)
+
+      return res.status(200).json({
+        success: true, message: "Content selected successfully", content
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      message: "Invalid status value"
+    });
+
+  } catch (error) {
+    console.error("update content status Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message
+    });
+  }
+}
+
 
 
 module.exports = {
   signUpSuperAdmin, loginSuperAdmin, getDashboatdStats, getAllUser, getAllVendor, getSingleVendor, upsertRevenueShare,
-  payVendor, deleteVendor, connectVendorAccount, getStripeBalance, addProduct, updateProduct, deleteProduct, getAllProducts
+  payVendor, deleteVendor, connectVendorAccount, getStripeBalance, addProduct, updateProduct, deleteProduct, getAllProducts,
+  createContentRequest, getContent, updateContentStatus
 }

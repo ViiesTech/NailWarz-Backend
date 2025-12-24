@@ -140,11 +140,22 @@ routes.get("/getAllRefund", refundController.getAllRefund);
 
 
 //Battle
-routes.post("/createBattle", uploads.battleUpload.array("salonImage"), battleController.createBattle);
-routes.post("/updateWholeBattle", uploads.battleUpload.single("salonImage"), battleController.updateWholeBattle);
+// routes.post("/createBattle", uploads.battleUpload.array("salonImage"), battleController.createBattle);
+routes.route("/battle")
+    .post(battleController.createBattle)
+    .patch(battleController.updateBattle)
+    .get(battleController.getAllBattle)
+
+routes.route("/battle/:id")
+    .patch(battleController.updateBattle)
+    .get(battleController.getBattleById)
+
+routes.patch("/updateBattleParticipants/:id", battleController.updateBattleParticipants)
+// routes.post("/battle", battleController.createBattle);
+// routes.post("/updateWholeBattle", uploads.battleUpload.single("salonImage"), battleController.updateWholeBattle);
 routes.post("/addOrRemoveVotes", battleController.addOrRemoveVotes);
-routes.post("/deleteBattle", battleController.deleteBattle);
-routes.get("/getBattleById", battleController.getBattleById);
-routes.get("/getAllBattle", battleController.getAllBattle);
+// routes.post("/deleteBattle", battleController.deleteBattle);
+// routes.get("/getBattleById", battleController.getBattleById);
+// routes.get("/getAllBattle", battleController.getAllBattle);
 
 module.exports = routes;

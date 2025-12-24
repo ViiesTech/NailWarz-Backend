@@ -72,6 +72,15 @@ const productStorage = multer.diskStorage({
   },
 });
 
+const contentStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./uploads/content");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
 const imageFileFilter = (req, file, cb) => {
   if (
     file.mimetype === "image/jpeg" ||
@@ -93,6 +102,14 @@ const productUpload = multer({
   },
 });
 
+const contentUpload = multer({
+  storage: contentStorage,
+  fileFilter: imageFileFilter,
+  limits: {
+    files: 7, // max 7 images
+  },
+});
+
 
 module.exports = {
   userUpload,
@@ -102,4 +119,5 @@ module.exports = {
   serviceUpload,
   battleUpload,
   productUpload,
+  contentUpload
 }
